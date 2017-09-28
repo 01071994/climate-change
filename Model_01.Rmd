@@ -1,0 +1,34 @@
+---
+title: "Global Warming Model 1"
+output: html_notebook
+author: "Noah T. Jones"
+---
+
+This notebook is to model temperature change over time. 
+
+This is a Markov Model where changes in state have a normal distribution inspired by actual temperature variability data about a mean that changes at about the same proportional rate as carbon dioxide has been rising in recent decades.
+
+```{r}
+nyears <- 10 # number of years to be simulated
+mgt <- 25 # mean global temperature
+states <- matrix(1, nrow = 12, ncol = nyears)
+lintime <- matrix()
+for (j in 1:nyears) {
+  for (i in 1:12) {
+    states[i,j] <- (mgt + rnorm(1, j/165, 0.1))
+    mgt <- states[1,j]
+  }
+}
+for (i in 2:nyears) {
+  lintime <- cbind(c(lintime[,1],states[,i]))
+}
+lintime <- matrix(lintime)
+plot(lintime, type = "l")
+```
+
+We construct a linear model of our data.
+
+```{r}
+summary(lm(lintime ~ c(1:109)))
+```
+
